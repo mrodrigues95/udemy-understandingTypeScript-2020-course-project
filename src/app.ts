@@ -1,8 +1,9 @@
-class Department {
+abstract class Department {
     // private name: string;
+    static fiscalYear = 2020;
     protected employees: string[] = [];
 
-    constructor(private readonly id: string, public name: string) {
+    constructor(protected readonly id: string, public name: string) {
         // this.name = name;
     }
 
@@ -10,9 +11,11 @@ class Department {
         return { name: name };
     }
 
-    describe(this: Department) {
-        console.log(`Department (${this.id}): ${this.name}`);
-    }
+    abstract describe(this: Department): void;
+
+    // describe(this: Department) {
+    //     console.log(`Department (${this.id}): ${this.name}`);
+    // }
 
     addEmployee(employee: string) {
         this.employees.push(employee);
@@ -30,6 +33,10 @@ class ITDepartment extends Department {
         super(id, 'IT');
         // this.admins = admins;
     }
+
+    describe() {
+        console.log('IT Department - ID: ' + this.id);
+    }
 }
 
 class AccountingDepartment extends Department {
@@ -40,6 +47,10 @@ class AccountingDepartment extends Department {
             return this.lastReport;
         }
         throw new Error('No report found.'); // null
+    }
+
+    describe() {
+        console.log('Account department - ID: ' + this.id);
     }
 
     set mostRecentReport(value: string) {
@@ -71,6 +82,7 @@ class AccountingDepartment extends Department {
     }
 }
 
+// using static method
 const employee1 = Department.createEmployee('Marcus');
 console.log(employee1);
 
@@ -87,6 +99,7 @@ accounting.addReport('Something went wrong...');
 console.log(accounting.mostRecentReport);
 accounting.addEmployee('Marcus'); // should not work
 accounting.addEmployee('Chris'); // should work
-accounting.printReports();
-accounting.printEmployeeInformation();
+// accounting.printReports();
+// accounting.printEmployeeInformation();
+accounting.describe();
 console.log(accounting);
