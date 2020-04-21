@@ -41,16 +41,13 @@ class ITDepartment extends Department {
 
 class AccountingDepartment extends Department {
     private lastReport: string;
+    private static instance: AccountingDepartment;
 
     get mostRecentReport() {
         if (this.lastReport) {
             return this.lastReport;
         }
         throw new Error('No report found.'); // null
-    }
-
-    describe() {
-        console.log('Account department - ID: ' + this.id);
     }
 
     set mostRecentReport(value: string) {
@@ -60,9 +57,22 @@ class AccountingDepartment extends Department {
         this.addReport(value);
     }
 
-    constructor(id: string, private reports: string[]) {
+    // singleton
+    private constructor(id: string, private reports: string[]) {
         super(id, 'Accounting');
         this.lastReport = reports[0];
+    }
+
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        }
+        this.instance = new AccountingDepartment('d2', [])
+        return this.instance;
+    }
+
+    describe() {
+        console.log('Account department - ID: ' + this.id);
     }
 
     addEmployee(name: string) {
@@ -93,7 +103,8 @@ it.describe();
 it.printEmployeeInformation();
 console.log(it);
 
-const accounting = new AccountingDepartment('d2', []);
+// const accounting = new AccountingDepartment('d2', []);
+const accounting = AccountingDepartment.getInstance();
 accounting.mostRecentReport = 'Year End Report'; // setter
 accounting.addReport('Something went wrong...');
 console.log(accounting.mostRecentReport);
