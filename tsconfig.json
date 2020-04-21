@@ -65,6 +65,7 @@
   },
   "exclude": [
     "node_modules", // this is default 
-    "types_and_basics"
+    "types_and_basics",
+    "arrays_arrowFunctions"
   ]
 }
