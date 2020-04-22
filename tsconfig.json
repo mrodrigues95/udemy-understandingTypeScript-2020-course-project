@@ -67,6 +67,7 @@
     "node_modules", // this is default 
     "types_and_basics",
     "arrays_arrowFunctions",
-    "classes_and_interfaces"
+    "classes_and_interfaces",
+    "advanced_types"
   ]
 }
