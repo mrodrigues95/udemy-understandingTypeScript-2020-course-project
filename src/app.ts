@@ -45,6 +45,7 @@ function printEmployeeInformation(emp: UnknownEmployee) {
 
 printEmployeeInformation(e1);
 
+// Type guards with classes
 class Car {
     drive() {
         console.log('Driving...');
@@ -75,3 +76,31 @@ function useVehicle(vehicle: Vehicle) {
 
 useVehicle(v1);
 useVehicle(v2);
+
+// Discriminated unions
+interface Bird {
+    type: 'bird'; // important
+    flyingSpeed: number;
+}
+
+interface Horse {
+    type: 'horse'; // important
+    runningSpeed: number;
+}
+
+type Animal = Bird | Horse;
+
+function moveAnimal(animal: Animal) {
+    let speed;
+    switch (animal.type) {
+        case 'bird':
+            speed = animal.flyingSpeed;
+            break;
+        case 'horse':
+            speed = animal.runningSpeed;
+            break;
+    }
+    console.log('Moving at speed: ' + speed);
+}
+
+moveAnimal({type: 'bird', flyingSpeed: 10});
