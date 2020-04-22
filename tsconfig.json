@@ -66,6 +66,7 @@
   "exclude": [
     "node_modules", // this is default 
     "types_and_basics",
-    "arrays_arrowFunctions"
+    "arrays_arrowFunctions",
+    "classes_and_interfaces"
   ]
 }
