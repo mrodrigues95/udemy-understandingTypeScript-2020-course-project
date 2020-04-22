@@ -139,3 +139,8 @@ const fetchedUserData = {
 };
 
 console.log(fetchedUserData?.job?.title);
+
+const userInput = null;
+
+// if null or undefined then use fallback
+const storedData = userInput ?? 'Default';
