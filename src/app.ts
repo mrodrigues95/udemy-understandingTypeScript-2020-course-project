@@ -1,75 +1,62 @@
-// const names: Array<string> = [];
-
-// const promise: Promise<string> = new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//         resolve('This is done!');
-//     }, 2000);
-// });
-
-// promise.then(data => {
-//     data.split(' ');
-// });
-
-function merge<T extends object, U extends object>(objA: T, objB: U) {
-    return Object.assign(objA, objB);
+function Logger(logString: string) {
+    console.log('LOGGER FACTORY');
+    return function(constructor: Function) {
+        console.log(logString);
+        console.log(constructor);
+    };
 }
 
-const mergedObj = merge({ name: 'Marcus', hobbies: ['Sports'] }, { age: 24 });
-console.log(mergedObj);
-
-interface Lengthy {
-    length: number;
+function WithTemplate(template: string, hookId: string) {
+    console.log('TEMPLATE FACTORY');
+    return function(constructor: any) {
+        console.log('Rendering tamplate...');
+        const hookEl = document.getElementById(hookId);
+        const p = new constructor();
+        if (hookEl) {
+            hookEl.innerHTML = template;
+            hookEl.querySelector('h1')!.textContent = p.name;
+        }
+    }
 }
 
-function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
-    let descriptionText = 'Got no value.';
-    if (element.length === 1) {
-        descriptionText = 'Got 1 element.';
-    } else if (element.length > 0) {
-        descriptionText = 'Got ' + element.length + ' elements.';
+@Logger('LOGGING')
+@WithTemplate('<h1>My Person Object</h1>', 'app')
+class Person {
+    name = 'Marcus';
+
+    constructor() {
+        console.log('Creating person object...');
     }
-    return [element, descriptionText];
 }
 
-console.log(countAndDescribe('Hi there!'));
+const pers = new Person();
 
-function extractAndConvert<T extends object, U extends keyof T>(obj: T, key: U) {
-    return 'ValueL ' + obj[key];
+console.log(pers);
+
+// ---
+function Log(target: any, propertyName: string | Symbol) {
+    console.log('Property decorator!');
+    console.log(target, propertyName);
 }
 
-extractAndConvert({ name: 'Marcus' }, 'name');
+class Product {
+    @Log
+    title: string;
+    private _price: number;
 
-class DataStorage<T extends string | number | boolean> {
-    private data: T[] = [];
-  
-    addItem(item: T) {
-      this.data.push(item);
+    set price(val: number) {
+        if (val > 0) {
+            this._price = val;
+        }
+        throw new Error('Invalid price - should be positive!');
     }
-  
-    removeItem(item: T) {
-      if (this.data.indexOf(item) === -1) {
-        return;
-      }
-      this.data.splice(this.data.indexOf(item), 1); // -1
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this._price = p;
     }
-  
-    getItems() {
-      return [...this.data];
+
+    getPriceWithTax(tax: number) {
+        return this._price * (1 + tax);
     }
-  }
-  
-  const textStorage = new DataStorage<string>();
-  textStorage.addItem('Max');
-  textStorage.addItem('Manu');
-  textStorage.removeItem('Max');
-  console.log(textStorage.getItems());
-  
-  const numberStorage = new DataStorage<number>();
-  
-  // const objStorage = new DataStorage<object>();
-  // const maxObj = {name: 'Max'};
-  // objStorage.addItem(maxObj);
-  // objStorage.addItem({name: 'Manu'});
-  // // ...
-  // objStorage.removeItem(maxObj);
-  // console.log(objStorage.getItems());
+}
