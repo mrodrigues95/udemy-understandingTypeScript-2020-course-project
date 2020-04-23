@@ -63,6 +63,44 @@ function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
+class ProjectList {
+  templateElement: HTMLTemplateElement; // template
+  hostElement: HTMLDivElement; // div
+  element: HTMLElement; // section
+  
+  constructor(private type: 'active' | 'finished') {
+    // Retrieve template elements.
+    this.templateElement = document.getElementById(
+      'project-list'
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById('app')! as HTMLDivElement;
+
+    // Template content.
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    // Store the section element.
+    this.element = importedNode.firstElementChild as HTMLElement;
+    this.element.id = `${this.type}-projects`;
+    this.attach();
+    this.renderContent();
+  }
+
+  private renderContent() {
+    // Get the unordered list and assign an id.
+    // Also, fill the h2 with some content.
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector('ul')!.id = listId;
+    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + 'PROJECTS';
+  }
+
+  // Render an element.
+  private attach() {
+    this.hostElement.insertAdjacentElement('beforeend', this.element);
+  }
+}
+
 class ProjectInput {
   templateElement: HTMLTemplateElement; // template
   hostElement: HTMLDivElement; // div
@@ -141,6 +179,7 @@ class ProjectInput {
     }
   }
 
+  // Clear form inputs.
   private clearInputs() {
     this.titleInputElement.value = '';
     this.descriptionInputElement.value = '';
@@ -170,3 +209,5 @@ class ProjectInput {
 }
 
 const prjInput = new ProjectInput();
+const activePrjList = new ProjectList('active');
+const finishedPrjList = new ProjectList('finished');
