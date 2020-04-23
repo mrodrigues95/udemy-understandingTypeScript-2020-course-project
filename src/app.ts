@@ -1,3 +1,55 @@
+// Validation.
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+function validate(validatableInput: Validatable) {
+  let isValid = true;
+  // Input is required.
+  if (validatableInput.required) {
+    // Return false if the value is 0, otherwise return true.
+    isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+  }
+  // The string should have a minimum length.
+  // Also, skip this check if the input is a number.
+  if (
+    validatableInput.minLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid =
+      isValid && validatableInput.value.length > validatableInput.minLength;
+  }
+  // The string should have a maximum length.
+  // Also, skip this check if the input is a number.
+  if (
+    validatableInput.maxLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid =
+      isValid && validatableInput.value.length < validatableInput.maxLength;
+  }
+  // The number should have a minimum value.
+  if (
+    validatableInput.min != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value >= validatableInput.min;
+  }
+  // The number should have a maximum value.
+  if (
+    validatableInput.max != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value <= validatableInput.max;
+  }
+  return isValid;
+}
+
 // Autobind decorator.
 function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
@@ -56,14 +108,35 @@ class ProjectInput {
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
 
+    const typeValidtable: Validatable = {
+      value: enteredTitle,
+      required: true
+    };
+
+    const descriptionValidtable: Validatable = {
+      value: enteredDescription,
+      required: true,
+      minLength: 5
+    };
+
+    const peopleValidtable: Validatable = {
+      value: +enteredPeople,
+      required: true,
+      min: 1,
+      max: 5
+    };
+
+    // Validate the user input.
     if (
-      enteredTitle.trim().length === 0 ||
-      enteredDescription.trim().length === 0 ||
-      enteredPeople.trim().length === 0
+      // When at least one of these return false, throw an alert.
+      !validate(typeValidtable) ||
+      !validate(descriptionValidtable) ||
+      !validate(peopleValidtable)
     ) {
       alert('Invalid input, please try again!');
       return;
     } else {
+      // User input is valid, continue.
       return [enteredTitle, enteredDescription, +enteredPeople];
     }
   }
