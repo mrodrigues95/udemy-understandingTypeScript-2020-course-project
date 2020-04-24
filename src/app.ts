@@ -1,12 +1,28 @@
+// Project type.
+enum ProjectStatus {
+  ACTIVE,
+  FINISHED
+}
+
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
+
 // Project state management.
+type Listener = (items: Project[]) => void;
+
 class ProjectState {
-  private listeners: any[] = [];
-  private projects: any[] = [];
+  private listeners: Listener[] = [];
+  private projects: Project[] = [];
   private static instance: ProjectState;
 
-  private constructor() {
-
-  }
+  private constructor() {}
 
   static getInstance() {
     if (this.instance) {
@@ -16,18 +32,19 @@ class ProjectState {
     return this.instance;
   }
 
-  addListener(listenerFn: Function) {
+  addListener(listenerFn: Listener) {
     this.listeners.push(listenerFn);
   }
 
   // Add a new project.
   addProject(title: string, description: string, numOfPeople: number) {
-    const newProject = {
-      id: Math.random().toString(),
-      title: title,
-      description: description,
-      people: numOfPeople
-    };
+    const newProject = new Project(
+      Math.random().toString(),
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.ACTIVE
+    );
     this.projects.push(newProject);
     // Call all listener functions.
     for (const listenerFn of this.listeners) {
@@ -108,8 +125,8 @@ class ProjectList {
   templateElement: HTMLTemplateElement; // template
   hostElement: HTMLDivElement; // div
   element: HTMLElement; // section
-  assignedProjects: any[];
-  
+  assignedProjects: Project[];
+
   constructor(private type: 'active' | 'finished') {
     // Retrieve template elements.
     this.templateElement = document.getElementById(
@@ -127,7 +144,7 @@ class ProjectList {
     this.element = importedNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`;
     // Register a listener function.
-    projectState.addListener((projects: any[]) => {
+    projectState.addListener((projects: Project[]) => {
       this.assignedProjects = projects;
       this.renderProjects();
     });
@@ -137,11 +154,13 @@ class ProjectList {
 
   // Render all projects to the DOM.
   private renderProjects() {
-    const listEl = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+    const listEl = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
     for (const prjItem of this.assignedProjects) {
       const listItem = document.createElement('li');
-      listItem.textContent = prjItem.title;
-      listEl?.appendChild(listItem);
+      listItem.textContent = prjItem.title; // only show the project title
+      listEl?.appendChild(listItem); // append to the list item
     }
   }
 
@@ -150,7 +169,8 @@ class ProjectList {
     // Also, fill the h2 with some content.
     const listId = `${this.type}-projects-list`;
     this.element.querySelector('ul')!.id = listId;
-    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + 'PROJECTS';
+    this.element.querySelector('h2')!.textContent =
+      this.type.toUpperCase() + 'PROJECTS';
   }
 
   // Render an element.
