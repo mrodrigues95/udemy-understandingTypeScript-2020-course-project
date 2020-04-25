@@ -1,7 +1,7 @@
-import { Component } from './base-component.js';
-import { Validatable, validate } from '../util/validation.js';
-import { Autobind } from '../decorators/autobind.js';
-import { projectState } from '../state/project-state.js';
+import { Component } from './base-component';
+import * as Validation from '../util/validation';
+import { Autobind } from '../decorators/autobind';
+import { projectState } from '../state/project-state';
 
 export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
@@ -29,18 +29,18 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
 
-    const typeValidtable: Validatable = {
+    const typeValidtable: Validation.Validatable = {
       value: enteredTitle,
       required: true
     };
 
-    const descriptionValidtable: Validatable = {
+    const descriptionValidtable: Validation.Validatable = {
       value: enteredDescription,
       required: true,
       minLength: 5
     };
 
-    const peopleValidtable: Validatable = {
+    const peopleValidtable: Validation.Validatable = {
       value: +enteredPeople,
       required: true,
       min: 1,
@@ -50,9 +50,9 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     // Validate the user input.
     if (
       // When at least one of these return false, throw an alert.
-      !validate(typeValidtable) ||
-      !validate(descriptionValidtable) ||
-      !validate(peopleValidtable)
+      !Validation.validate(typeValidtable) ||
+      !Validation.validate(descriptionValidtable) ||
+      !Validation.validate(peopleValidtable)
     ) {
       alert('Invalid input, please try again!');
       return;

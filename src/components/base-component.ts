@@ -1,5 +1,3 @@
-
-
 // Component base class
 // Performs all of the general rendering/attaching of the component.
 export abstract class Component<T extends HTMLElement, U extends HTMLElement> {
